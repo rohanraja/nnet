@@ -24,7 +24,7 @@ func (nn SoftmaxRegressor) Compute_Cost(params Params, datasets Dataset) float64
 
 		costMat := delta.Log()
 		newcost := costMat.Array()[0]
-		cost += newcost
+		cost += -1 * newcost
 	}
 	return cost
 }
@@ -42,7 +42,7 @@ func (nn SoftmaxRegressor) Compute_Gradient(params Params, datasets Dataset) (pa
 
 		//Backward Propogation
 
-		delta := matrix.Difference(Y, h)
+		delta := matrix.Difference(h, Y)
 
 		paramGrad := make(Params)
 		paramGrad["W"] = matrix.Product(delta, X.Transpose())
