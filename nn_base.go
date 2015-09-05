@@ -8,10 +8,10 @@ type NN_Base interface {
 	GetDataset() Dataset
 }
 
-func GetUnpackedFunctions(nn NN_Base) (f func([]float64) float64, fprime func([]float64) []float64) {
+func GetUnpackedFunctions(nn NN_Base, dataset Dataset) (f func([]float64) float64, fprime func([]float64) []float64) {
 
 	params := nn.GetParams()
-	dataset := nn.GetDataset()
+	// dataset := nn.GetDataset()
 	f = func(x []float64) float64 {
 
 		var p Params
@@ -34,7 +34,7 @@ func GetUnpackedFunctions(nn NN_Base) (f func([]float64) float64, fprime func([]
 
 func GradientCheck(nn NN_Base) bool {
 
-	f, fprime := GetUnpackedFunctions(nn)
+	f, fprime := GetUnpackedFunctions(nn, nn.GetDataset())
 	params := nn.GetParams()
 	x := params.UnPack()
 

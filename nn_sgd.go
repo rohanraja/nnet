@@ -4,14 +4,14 @@ import "github.com/fatih/color"
 
 func ApplyGradToBatch(nn NN_Base) {
 
-	alpha := 0.03
+	alpha := 1.3
 
 	params := nn.GetParams()
 	theta := params.UnPack()
 
 	for i := 0; i < 100; i++ {
 
-		f, fprime := GetUnpackedFunctions(nn)
+		f, fprime := GetUnpackedFunctions(nn, nn.GetDataset())
 		cost := f(theta)
 		color.Green("Cost = %f", cost)
 
