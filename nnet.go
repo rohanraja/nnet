@@ -1,11 +1,6 @@
 package nnet
 
-import (
-	"github.com/fatih/color"
-	"github.com/rohanraja/go.matrix"
-)
-
-type Params map[string]*matrix.DenseMatrix
+import "github.com/rohanraja/go.matrix"
 
 type Dataset struct {
 	X *matrix.DenseMatrix
@@ -35,12 +30,12 @@ func NN_Grad(params Params, dataset Dataset) (paramGrads Params) {
 
 	//Backward Propogation
 
-	delta := matrix.Difference(h, dataset.Y)
+	delta := matrix.Difference(dataset.Y, h)
 
 	paramGrads = make(Params)
 	paramGrads["W"] = matrix.Product(delta, dataset.X.Transpose())
 	paramGrads["B1"] = delta
 
-	color.Cyan("%v", paramGrads)
+	// color.Cyan("%v", paramGrads)
 	return
 }
