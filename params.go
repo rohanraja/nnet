@@ -15,6 +15,22 @@ type Dimention struct {
 
 type Paraminfo map[string]Dimention
 
+func (p1 *Params) Add(p2 Params) {
+
+	for key, _ := range p2 {
+
+		_, ok := (*p1)[key]
+
+		if ok == false {
+
+			(*p1)[key] = matrix.Zeros(p2[key].Rows(), p2[key].Cols())
+		}
+
+		(*p1)[key].Add(p2[key])
+	}
+
+}
+
 func (p *Params) Pack(inp []float64, pinfo Paraminfo) {
 
 	pnew := make(Params)

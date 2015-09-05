@@ -16,8 +16,11 @@ func TestSoftmaxGrad(t *testing.T) {
 
 	var testDataset Dataset
 
-	testDataset.X = matrix.Normals(3, 1)
-	testDataset.Y = matrix.MakeDenseMatrix([]float64{1, 0, 0, 0, 0}, 5, 1)
+	testDataset.X = matrix.Normals(3, 2)
+	// testDataset.Y = matrix.MakeDenseMatrix([]float64{1, 0, 0, 0, 0}, 5, 1)
+	testDataset.Y = matrix.Zeros(5, 2)
+	// testDataset.Y.Set(0, 0, 1)
+	// testDataset.Y.Set(0, 1, 1)
 
 	sr := SoftmaxRegressor{testParams, testDataset}
 
