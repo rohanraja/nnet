@@ -10,22 +10,25 @@ type SoftmaxRegressor struct {
 func (nn SoftmaxRegressor) Compute_Cost(params Params, datasets Dataset) float64 {
 
 	cost := 0.0
-	for i := 0; i < datasets.X.Cols(); i++ {
 
-		X := datasets.X.GetMatrix(0, i, datasets.X.Rows(), 1)
-		Y := datasets.Y.GetMatrix(0, i, datasets.Y.Rows(), 1)
+	X := datasets.X //.GetMatrix(0, i, datasets.X.Rows(), 1)
+	Y := datasets.Y //.GetMatrix(0, i, datasets.Y.Rows(), 1)
 
-		h := matrix.Product(params["W"], X)
-		h.Add(params["B1"])
+	h := matrix.Product(params["W"], X)
+	h.AddVector(params["B1"])
+	h.Softmax()
 
-		h.Softmax()
+	delta, _ := h.ElementMultDense(Y)
+	XDummy := matrix.Ones(1, delta.Rows())
 
-		delta := matrix.Product(h.Transpose(), Y)
+	delta = matrix.Product(XDummy, delta)
+	delta = delta.Log()
 
-		costMat := delta.Log()
-		newcost := costMat.Array()[0]
-		cost += -1 * newcost
-	}
+	XDummy = matrix.Ones(delta.Cols(), 1)
+
+	costmat := matrix.Product(delta, XDummy)
+	newcost := costmat.Array()[0]
+	cost += -1 * newcost
 	return cost
 }
 
@@ -33,25 +36,25 @@ func (nn SoftmaxRegressor) Compute_Gradient(params Params, datasets Dataset) (pa
 	//Forward Propogation
 
 	paramGrads = make(Params)
-	for i := 0; i < datasets.X.Cols(); i++ {
-		X := datasets.X.GetMatrix(0, i, datasets.X.Rows(), 1)
-		Y := datasets.Y.GetMatrix(0, i, datasets.Y.Rows(), 1)
-		h := matrix.Product(params["W"], X)
-		h.Add(params["B1"])
-		h.Softmax()
 
-		//Backward Propogation
+	X := datasets.X //.GetMatrix(0, i, datasets.X.Rows(), 1)
+	Y := datasets.Y //.GetMatrix(0, i, datasets.Y.Rows(), 1)
+	h := matrix.Product(params["W"], X)
+	h.AddVector(params["B1"])
+	h.Softmax()
 
-		delta := matrix.Difference(h, Y)
+	//Backward Propogation
 
-		paramGrad := make(Params)
-		paramGrad["W"] = matrix.Product(delta, X.Transpose())
-		paramGrad["B1"] = delta
+	delta := matrix.Difference(h, Y)
 
-		paramGrads.Add(paramGrad)
+	paramGrad := make(Params)
+	paramGrad["W"] = matrix.Product(delta, X.Transpose())
 
-	}
-	// color.Cyan("%v", paramGrads)
+	XDummy := matrix.Ones(delta.Cols(), 1)
+	paramGrad["B1"] = matrix.Product(delta, XDummy)
+
+	paramGrads.Add(paramGrad)
+
 	return
 }
 
